@@ -1,7 +1,9 @@
-import express, { json } from 'express';
+import express from 'express';
 import {} from 'express-async-errors';
 import { body } from 'express-validator';
-import { validate } from '../middleware/validator';
+import { validate } from '../middleware/validator.js';
+import * as authController from '../controller/auth.js';
+import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -32,4 +34,8 @@ const validateSignup = [
 // 컨트롤러에 있는 signup을 연결
 router.post('/signup', validateSignup, authController.signup);
 
-router.post('/login', validateCredential, authController.signup);
+router.post('/login', validateCredential, authController.login);
+
+router.get('/me', isAuth, authController.me); // 사용자의 토큰을 이용 유효함을 확인후 작동
+
+export default router;
