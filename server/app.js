@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
+import { Server } from 'socket.io';
 
 const app = express();
 // 미들웨어 : 거처가는 함수들 next를 통해 다음 미들웨어로 요청을 넘김
@@ -30,4 +31,20 @@ app.use((error, req, res, next) => {
   res.sendStatus(500);
 });
 
-app.listen(config.host.port);
+const server = app.listen(config.host.port);
+const socketIO = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+});
+
+socketIO.on('connection', soket => {
+  console.log('client is here');
+  socketIO.emit('dwitter', 'hello~'); // 이벤트를 emit 어떤 주제에 따라 듣게할수 있음
+  socketIO.emit('dwitter', 'hello~');
+});
+
+// 1초마다 받을수 있음
+setInterval(() => {
+  socketIO.emit('dwitter', 'Hello');
+}, 1000);

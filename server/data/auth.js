@@ -8,6 +8,13 @@ let users = [
     email: 'anshqhsh.dev@gmail.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
   },
+  {
+    id: '2',
+    username: 'joon',
+    password: '$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm',
+    name: 'Joon',
+    email: 'anshqhsh.dev@gmail.com',
+  },
 ];
 
 export async function findByUsername(username) {
