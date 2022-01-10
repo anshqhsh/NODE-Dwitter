@@ -1,3 +1,4 @@
+import { getSocketIO } from '../connection/socket.js';
 import * as tweetRepository from '../data/tweet.js';
 
 export async function getTweets(req, res) {
@@ -22,6 +23,8 @@ export async function createTweet(req, res, next) {
   const { text, username, name } = req.body;
   const tweet = await tweetRepository.create(text, req.userId);
   res.status(201).json(tweet);
+  // 소켓 통신 부분
+  getSocketIO().emit('tweets', tweet);
 }
 export async function updateTweet(req, res, next) {
   const id = req.params.id;
