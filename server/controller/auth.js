@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import {} from 'express-async-errors';
 import * as userRepository from '../data/auth.js';
+import { config } from '../config.js';
 
 // 사용자 데이터를 저장, 읽기 Repository를 이용해서 정보를 찾을 것
 
@@ -18,7 +19,7 @@ export async function signup(req, res) {
     return res.status(409).json({ message: `${username} already exists` });
   }
   //암호화
-  const hashed = await bcrypt.hash(password, bcryptSaltRounds);
+  const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
   // 사용자 아이디를 받아
   const userId = await userRepository.createUser({
     username,
@@ -51,7 +52,9 @@ export async function login(req, res) {
 }
 
 function createJwtToken(id) {
-  return jwt.sign({ id }, jwtSecretkey, { expiresIn: jwtExpiresInDays });
+  return jwt.sign({ id }, config.jwt.secretKey, {
+    expiresIn: config.jwt.expiresInSec,
+  });
 }
 
 export async function me(req, res, next) {
