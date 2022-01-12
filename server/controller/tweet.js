@@ -20,7 +20,7 @@ export async function getTweet(req, res, next) {
 }
 
 export async function createTweet(req, res, next) {
-  const { text, username, name } = req.body;
+  const { text } = req.body;
   const tweet = await tweetRepository.create(text, req.userId);
   res.status(201).json(tweet);
   // 소켓 통신 부분
@@ -47,7 +47,7 @@ export async function deleteTweet(req, res, next) {
   const id = req.params.id;
   const tweet = await tweetRepository.getById(id);
   if (!tweet) {
-    return res.sendStatus(404);
+    return res.sendStatus(404).json({ message: `Tweet not found:${id}` });
   }
   if (tweet.userId != req.userId) {
     return res.sendStatus(403);

@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
-import initSocket from './connection/socket.js';
+import { initSocket } from './connection/socket.js';
 
 const app = express();
 // 미들웨어 : 거처가는 함수들 next를 통해 다음 미들웨어로 요청을 넘김

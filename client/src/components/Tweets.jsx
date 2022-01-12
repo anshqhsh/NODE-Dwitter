@@ -12,37 +12,42 @@ const Tweets = memo(({ tweetService, username, addable }) => {
   const { user } = useAuth();
 
   useEffect(() => {
+    //전체 트윗을 받아옴
     tweetService
       .getTweets(username)
-      .then((tweets) => setTweets([...tweets]))
+      .then(tweets => setTweets([...tweets]))
       .catch(onError);
+
+    // 컴포넌트가 끝날때 스톱
+    const stopSync = tweetService.onSync(tweet => onCreated(tweet));
+    return () => stopSync();
   }, [tweetService, username, user]);
 
-  const onCreated = (tweet) => {
-    setTweets((tweets) => [tweet, ...tweets]);
+  const onCreated = tweet => {
+    setTweets(tweets => [tweet, ...tweets]);
   };
 
-  const onDelete = (tweetId) =>
+  const onDelete = tweetId =>
     tweetService
       .deleteTweet(tweetId)
       .then(() =>
-        setTweets((tweets) => tweets.filter((tweet) => tweet.id !== tweetId))
+        setTweets(tweets => tweets.filter(tweet => tweet.id !== tweetId))
       )
-      .catch((error) => setError(error.toString()));
+      .catch(error => setError(error.toString()));
 
   const onUpdate = (tweetId, text) =>
     tweetService
       .updateTweet(tweetId, text)
-      .then((updated) =>
-        setTweets((tweets) =>
-          tweets.map((item) => (item.id === updated.id ? updated : item))
+      .then(updated =>
+        setTweets(tweets =>
+          tweets.map(item => (item.id === updated.id ? updated : item))
         )
       )
-      .catch((error) => error.toString());
+      .catch(error => error.toString());
 
-  const onUsernameClick = (tweet) => history.push(`/${tweet.username}`);
+  const onUsernameClick = tweet => history.push(`/${tweet.username}`);
 
-  const onError = (error) => {
+  const onError = error => {
     setError(error.toString());
     setTimeout(() => {
       setError('');
@@ -52,16 +57,12 @@ const Tweets = memo(({ tweetService, username, addable }) => {
   return (
     <>
       {addable && (
-        <NewTweetForm
-          tweetService={tweetService}
-          onError={onError}
-          onCreated={onCreated}
-        />
+        <NewTweetForm tweetService={tweetService} onError={onError} />
       )}
       {error && <Banner text={error} isAlert={true} transient={true} />}
-      {tweets.length === 0 && <p className='tweets-empty'>No Tweets Yet</p>}
-      <ul className='tweets'>
-        {tweets.map((tweet) => (
+      {tweets.length === 0 && <p className="tweets-empty">No Tweets Yet</p>}
+      <ul className="tweets">
+        {tweets.map(tweet => (
           <TweetCard
             key={tweet.id}
             tweet={tweet}

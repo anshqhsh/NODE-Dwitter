@@ -6,11 +6,6 @@ import { config } from '../config.js';
 
 // 사용자 데이터를 저장, 읽기 Repository를 이용해서 정보를 찾을 것
 
-// Secret
-const jwtSecretkey = 'F2dN7x8HVzBWaQuEEDnhsvHXRWqAR63z';
-const jwtExpiresInDays = '2d';
-const bcryptSaltRounds = 12;
-
 export async function signup(req, res) {
   const { username, password, name, email, url } = req.body;
   const found = await userRepository.findByUsername(username);
