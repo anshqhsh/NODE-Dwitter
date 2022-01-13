@@ -7,7 +7,7 @@ import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
 import { initSocket } from './connection/socket.js';
-import { db } from './db/database.js';
+import { db, sequelize } from './db/database.js';
 
 const app = express();
 // 미들웨어 : 거처가는 함수들 next를 통해 다음 미들웨어로 요청을 넘김
@@ -34,5 +34,8 @@ app.use((error, req, res, next) => {
 
 db.getConnection().then(connection => console.log(connection));
 
-const server = app.listen(config.host.port);
-initSocket(server);
+sequelize.sync().then(client => {
+  // console.log(client);
+  const server = app.listen(config.host.port);
+  initSocket(server);
+}); //db 연결 해서 모델과 스키마가 테이블로 존재 하지 않는다면 테이블을 생성하는 함수
