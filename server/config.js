@@ -13,7 +13,7 @@ function required(key, defaultValue = undefined) {
   return value;
 }
 
-// 각 키를 그룹별로 정의
+// 각 키를 그룹별로 정의ㅊ
 export const config = {
   jwt: {
     secretKey: required('JWT_SECRET'),
@@ -24,5 +24,11 @@ export const config = {
   },
   host: {
     port: required('HOST_PORT', 8080),
+  },
+  db: {
+    host: required('DB_HOST'),
+    user: required('DB_USER'),
+    database: required('DB_DATABASE'),
+    password: required('DB_PASSWORD'),
   },
 };
