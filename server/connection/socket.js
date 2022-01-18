@@ -8,7 +8,7 @@ class Socket {
   constructor(server) {
     this.io = new Server(server, {
       cors: {
-        origin: '*',
+        origin: config.cors.allowedOrigin,
       },
     });
     //소켓 검증
