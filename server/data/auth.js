@@ -1,26 +1,28 @@
-import { getUsers } from '../database/database.js';
-import MongoDb from 'mongodb';
+import Mongoose from 'mongoose';
+import { userVirtualId } from '../database/database.js';
 
-const ObjectId = MongoDb.ObjectId; // class new
+const userSchema = new Mongoose.Schema({
+  username: { type: String, required: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  url: String,
+});
+
+userVirtualId(userSchema);
+
+// model 데이터를 읽어옴
+const User = Mongoose.model('User', userSchema); //유저 컬렉션을 스키마와 연결
 
 export async function findByUsername(username) {
-  return getUsers()
-    .findOne({ username }) //
-    .then(mapOptionalUser);
+  return User.findOne({ username });
 }
 
 export async function findById(id) {
-  return getUsers()
-    .findOne({ _id: new ObjectId(id) })
-    .then(mapOptionalUser);
+  return User.findById(id);
 }
 
 export async function createUser(user) {
-  return getUsers()
-    .insertOne(user) //사용자 오브젝트 전달
-    .then(data => data.insertedId.toString());
-}
-
-function mapOptionalUser(user) {
-  return user ? { ...user, id: user._id.toString() } : user; // 아이디가 오브젝트로 전달되기 때문에 id를 생성 toString
+  //model 이용
+  return new User(user).save().then(data => data.id);
 }

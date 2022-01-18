@@ -32,8 +32,10 @@ app.use((error, req, res, next) => {
   res.sendStatus(500);
 });
 
+//DB연결부
 connectDB()
   .then(() => {
+    console.log('init');
     const server = app.listen(config.host.port);
     initSocket(server);
   })

@@ -1,8 +1,6 @@
-import MongoDb from 'mongodb';
-import { getTweets } from '../database/database.js';
+import Mongoose from 'mongoose';
+import { userVirtualId } from '../database/database.js';
 import * as userRepository from './auth.js';
-
-const ObjectId = MongoDb.ObjectId;
 
 // NOSQL(특정한 컬렉션에서 관계가 불가피하게 필요할때는 정보의 중복성이 선호됨)
 // 관계형으로 짜는 것 보단 같은 데이터를 중복으로 가지고 있는것이 더 나음
@@ -15,68 +13,49 @@ const ObjectId = MongoDb.ObjectId;
 // SQL: 관계형
 // 조인쿼리의 성능이 좋기 때문에
 
-//userRepository에서 데이터를 가져옴
+const tweetSchema = new Mongoose.Schema(
+  {
+    text: { type: String, required: true },
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    username: { type: String, required: true },
+    url: String,
+  },
+  { timestamps: true } // 자동으로 생성, 변경 체크
+);
+
+userVirtualId(tweetSchema);
+// model
+const Tweet = Mongoose.model('Tweet', tweetSchema);
+
 export async function getAll() {
-  return getTweets() //
-    .find()
-    .sort({ createdAt: -1 }) //desc
-    .toArray()
-    .then(mapTweets);
+  return Tweet.find().sort({ createdAt: -1 });
 }
 
 export async function getAllByUsername(username) {
-  return getTweets() //
-    .find({ username })
-    .sort({ createdAt: -1 }) //desc
-    .toArray()
-    .then(mapTweets);
+  return Tweet.find({ username }).sort({ createdAt: -1 });
 }
 
 export async function getById(id) {
-  return getTweets() //
-    .findOne({ _id: new ObjectId(id) })
-    .then(mapOptionalTweet);
+  return Tweet.findById(id);
 }
 
 //트윗을 만들고 getById를 리턴
 export async function create(text, userId) {
-  const { name, username, url } = await userRepository.findById(userId);
-  const tweet = {
-    text,
-    createdAt: new Date(),
-    userId,
-    name: name,
-    username: username,
-    url: url,
-  };
-  return getTweets()
-    .insertOne(tweet)
-    .then(
-      data => mapOptionalTweet({ ...tweet, _id: data.insertedId }) // 아이디를 넣어줌
-    );
+  return userRepository.findById(userId).then(user =>
+    new Tweet({
+      text,
+      userId,
+      name: user.name,
+      username: user.username,
+    }).save()
+  );
 }
 
 export async function update(id, text) {
-  return getTweets()
-    .findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: { text } },
-      { returnDocument: 'after' }
-    )
-    .then(result => result.value)
-    .then(mapOptionalTweet);
+  return Tweet.findByIdAndUpdate(id, { text }, { returnOriginal: false });
 }
 
 export async function remove(id) {
-  return getTweets().deleteOne({ _id: new ObjectId(id) });
-}
-
-// null 일 수 도 있는 오브젝트를 변환 id를 포함해서 리턴해준다.
-function mapOptionalTweet(tweet) {
-  return tweet ? { ...tweet, id: tweet._id.toString() } : tweet;
-}
-
-// 각 트윗들을 받아서 mapOptionalTweet에 연결-  트윗 배열을 받아서 변환
-function mapTweets(tweets) {
-  return tweets.map(tweet => mapOptionalTweet(tweet)); // 생략가능
+  return Tweet.findByIdAndDelete(id);
 }
