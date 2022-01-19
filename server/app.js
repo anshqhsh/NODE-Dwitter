@@ -11,7 +11,6 @@ import { sequelize } from './db/database.js';
 
 const app = express();
 
-// cors
 const corsOption = {
   origin: config.cors.allowedOrigin,
   optionSuccessStatus: 200,
@@ -43,4 +42,4 @@ sequelize.sync().then(() => {
   console.log(`Server is started... ${new Date()}`);
   const server = app.listen(config.port);
   initSocket(server);
-}); //db 연결 해서 모델과 스키마가 테이블로 존재 하지 않는다면 테이블을 생성하는 함수
+});

@@ -1,7 +1,7 @@
 # Each route describes how an incoming URL is going to be processed by Platform.sh.
 'https://www.{default}/':
   type: upstream
-  upstream: 'dwitter:http'
+  upstream: 'dwitter-iann:http'
 
 'https://{default}/':
   type: redirect
@@ -9,6 +9,6 @@
 
 'https://www.{default}/ws':
   type: upstream
-  upstream: 'dwitter:http'
+  upstream: 'dwitter-iann:http'
   cache:
     enabled: false
