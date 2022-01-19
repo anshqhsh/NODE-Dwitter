@@ -20,7 +20,10 @@ export const isAuth = async (req, res, next) => {
     if (!user) {
       return res.status(401).json(AUTH_ERROR);
     }
+
     req.userId = user.id; //토큰이 있을때만 req 에 id를 저장할 수 있음
+    req.token = token;
+
     next();
   });
 };
