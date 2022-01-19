@@ -13,7 +13,7 @@ function required(key, defaultValue = undefined) {
   return value;
 }
 
-// 각 키를 그룹별로 정의ㅊ
+// 각 키를 그룹별로 정의
 export const config = {
   jwt: {
     secretKey: required('JWT_SECRET'),
@@ -22,13 +22,14 @@ export const config = {
   bcrypt: {
     saltRounds: parseInt(required('BCRYPT_SALT_ROUND', 12)),
   },
-  host: {
-    port: required('HOST_PORT', 8080),
-  },
   db: {
     host: required('DB_HOST'),
     user: required('DB_USER'),
     database: required('DB_DATABASE'),
     password: required('DB_PASSWORD'),
+  },
+  port: parseInt(required('PORT', 8080)),
+  cors: {
+    allowedOrigin: required('CORS_ALLOW_ORIGIN'),
   },
 };

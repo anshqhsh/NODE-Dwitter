@@ -11,6 +11,11 @@ import { sequelize } from './db/database.js';
 
 const app = express();
 
+const corsOption = {
+  origin: config.cors.allowedOrigin,
+  optionSuccessStatus: 200,
+};
+
 // 미들웨어 : 거처가는 함수들 next를 통해 다음 미들웨어로 요청을 넘김
 app.use(express.json());
 // HTTP 헤더의 설정변경을 통해 위함한 웹취약점으로부터 서버를 보호
@@ -34,6 +39,7 @@ app.use((error, req, res, next) => {
 });
 
 sequelize.sync().then(() => {
-  const server = app.listen(config.host.port);
+  console.log(`Server is started... ${new Date()}`);
+  const server = app.listen(config.port);
   initSocket(server);
-}); //db 연결 해서 모델과 스키마가 테이블로 존재 하지 않는다면 테이블을 생성하는 함수
+});
