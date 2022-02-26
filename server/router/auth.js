@@ -36,6 +36,8 @@ router.post('/signup', validateSignup, authController.signup);
 
 router.post('/login', validateCredential, authController.login);
 
+router.post('/logout', authController.logout);
+
 router.get('/me', isAuth, authController.me); // 사용자의 토큰을 이용 유효함을 확인후 작동
 
 export default router;

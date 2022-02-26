@@ -5,20 +5,18 @@ import App from './App';
 import AuthService from './service/auth';
 import TweetService from './service/tweet';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, fetchToken } from './context/AuthContext';
 import { AuthErrorEventBus } from './context/AuthContext';
 import HttpClient from './network/http';
-import TokenStorage from './db/token';
 import Socket from './network/socket';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-const tokenStorage = new TokenStorage();
 const authErrorEventBus = new AuthErrorEventBus();
-const httpClient = new HttpClient(baseURL, authErrorEventBus);
-const authService = new AuthService(httpClient, tokenStorage);
+const httpClient = new HttpClient(baseURL, authErrorEventBus); // http요청을 보내는곳
+const authService = new AuthService(httpClient);
 // 소켓통신 - baseurl과 저장된 토큰을 전달
-const socketClient = new Socket(baseURL, () => tokenStorage.getToken());
-const tweetService = new TweetService(httpClient, tokenStorage, socketClient);
+const socketClient = new Socket(baseURL, () => fetchToken); // memory상의 토큰을 보관하여 보냄
+const tweetService = new TweetService(httpClient, socketClient);
 
 ReactDOM.render(
   <React.StrictMode>

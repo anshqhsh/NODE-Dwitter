@@ -1,3 +1,4 @@
+// 메모리에 저장
 import {
   createContext,
   createRef,
@@ -13,12 +14,12 @@ import Login from '../pages/Login';
 
 const AuthContext = createContext({});
 
-const contextRef = createRef();
+const tokenRef = createRef();
 
 export function AuthProvider({ authService, authErrorEventBus, children }) {
   const [user, setUser] = useState(undefined);
 
-  useImperativeHandle(contextRef, () => (user ? user.token : undefined));
+  useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
   //토큰이 만료되면 유저를 undefined로 변경하고 로그인 페이지로 이동시킴
   useEffect(() => {
@@ -85,5 +86,5 @@ export class AuthErrorEventBus {
 }
 
 export default AuthContext;
-export const fetchToken = () => contextRef.current;
+export const fetchToken = () => tokenRef.current;
 export const useAuth = () => useContext(AuthContext);

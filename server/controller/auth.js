@@ -24,7 +24,8 @@ export async function signup(req, res) {
     url,
   });
   // 토큰을 생성
-  const token = createJwtToken(userId);
+  const token = createJwtToken(userId); // cookie header는 브라우저에 특화된곳
+  setToken(res, token);
   res.status(201).json({ token, username });
 }
 
@@ -43,7 +44,23 @@ export async function login(req, res) {
 
   //성공한다면 토큰을 생성 하고 이름을 받아옴
   const token = createJwtToken(user.id);
+  setToken(res, token);
   res.status(200).json({ token, username });
+}
+
+function setToken(res, token) {
+  const options = {
+    maxAge: config.jwt.expiresInSec * 1000,
+    httpOnly: true,
+    sameSite: 'none', // 서버, 클라이언트가 동일한 도메인이 아니더라도 작동
+    secure: true,
+  };
+  res.cookie('token', token, options); //헤더 쿠키에 저장, Http-Only
+}
+
+export async function logout(req, res, next) {
+  res.cookie('token', '');
+  res.status(200).json({ message: 'User has been logged out' });
 }
 
 function createJwtToken(id) {

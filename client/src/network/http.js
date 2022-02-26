@@ -11,6 +11,7 @@ export default class HttpClient {
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      credentials: 'include', // Httponly를위해 쿠키의 데이터를 읽음
     });
     let data;
     try {
