@@ -10,6 +10,7 @@ import { config } from './config.js';
 import { initSocket } from './connection/socket.js';
 import { sequelize } from './db/database.js';
 import { csrfCheck } from './middleware/csrf.js';
+import rateLimit from './middleware/rate-limiter.js';
 
 const app = express();
 
@@ -30,6 +31,9 @@ app.use(cors(corsOption));
 //	HTTP 요청 로그를 남깁니다
 app.use(morgan('tiny'));
 //  csrf 토큰을 검증
+
+app.use(rateLimit);
+
 app.use(csrfCheck);
 
 app.use('/tweets', tweetsRouter);
