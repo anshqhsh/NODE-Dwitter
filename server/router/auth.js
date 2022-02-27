@@ -40,4 +40,6 @@ router.post('/logout', authController.logout);
 
 router.get('/me', isAuth, authController.me); // 사용자의 토큰을 이용 유효함을 확인후 작동
 
+router.get('/csrf-token', authController.csrfToken);
+
 export default router;

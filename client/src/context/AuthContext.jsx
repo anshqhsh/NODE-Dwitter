@@ -15,11 +15,14 @@ import Login from '../pages/Login';
 const AuthContext = createContext({});
 
 const tokenRef = createRef();
+const csrfRef = createRef();
 
 export function AuthProvider({ authService, authErrorEventBus, children }) {
   const [user, setUser] = useState(undefined);
+  const [csrfToken, setCsrfToken] = useState(undefined);
 
   useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
+  useImperativeHandle(csrfRef, () => csrfToken);
 
   //토큰이 만료되면 유저를 undefined로 변경하고 로그인 페이지로 이동시킴
   useEffect(() => {
@@ -28,6 +31,9 @@ export function AuthProvider({ authService, authErrorEventBus, children }) {
       setUser(undefined);
     });
   }, [authErrorEventBus]);
+  useEffect(() => {
+    authService.csrfToken().then(setCsrfToken).catch(console.error);
+  }, [authService]);
 
   useEffect(() => {
     authService.me().then(setUser).catch(console.error);
@@ -87,4 +93,5 @@ export class AuthErrorEventBus {
 
 export default AuthContext;
 export const fetchToken = () => tokenRef.current;
+export const fetchCsrfToken = () => csrfRef.current;
 export const useAuth = () => useContext(AuthContext);

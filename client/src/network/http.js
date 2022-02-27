@@ -1,17 +1,20 @@
 export default class HttpClient {
-  constructor(baseURL, authErrorEventBus) {
+  constructor(baseURL, authErrorEventBus, getCsrfToken) {
     this.baseURL = baseURL;
     this.authErrorEventBus = authErrorEventBus;
+    this.getCsrfToken = getCsrfToken;
   }
 
   async fetch(url, options) {
+    console.log('fetch');
     const res = await fetch(`${this.baseURL}${url}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
+        '_csrf-token': this.getCsrfToken(), // 헤더에 추가
       },
-      credentials: 'include', // Httponly를위해 쿠키의 데이터를 읽음
+      credentials: 'include',
     });
     let data;
     try {

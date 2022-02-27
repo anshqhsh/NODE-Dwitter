@@ -30,7 +30,6 @@ export async function signup(req, res) {
 }
 
 export async function login(req, res) {
-  console.log('login');
   const { username, password } = req.body;
   const user = await userRepository.findByUsername(username);
   if (!user) {
@@ -47,7 +46,15 @@ export async function login(req, res) {
   setToken(res, token);
   res.status(200).json({ token, username });
 }
-
+export async function logout(req, res, next) {
+  res.cookie('token', '');
+  res.status(200).json({ message: 'User has been logged out' });
+}
+function createJwtToken(id) {
+  return jwt.sign({ id }, config.jwt.secretKey, {
+    expiresIn: config.jwt.expiresInSec,
+  });
+}
 function setToken(res, token) {
   const options = {
     maxAge: config.jwt.expiresInSec * 1000,
@@ -58,21 +65,18 @@ function setToken(res, token) {
   res.cookie('token', token, options); //헤더 쿠키에 저장, Http-Only
 }
 
-export async function logout(req, res, next) {
-  res.cookie('token', '');
-  res.status(200).json({ message: 'User has been logged out' });
-}
-
-function createJwtToken(id) {
-  return jwt.sign({ id }, config.jwt.secretKey, {
-    expiresIn: config.jwt.expiresInSec,
-  });
-}
-
 export async function me(req, res, next) {
   const user = await userRepository.findById(req.userId);
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
   res.status(200).json({ token: req.token, username: user.username });
+}
+export async function csrfToken(req, res, next) {
+  const csrfToken = await generateCSRFToken();
+  res.status(200).json({ csrfToken });
+}
+
+async function generateCSRFToken() {
+  return bcrypt.hash(config.csrf.plainToken, 1);
 }
