@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { config } from '../config.js';
+import { config } from './config.js';
 
 //외부에서 사용 불가
 class Socket {

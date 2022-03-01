@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
-import { initSocket } from './connection/socket.js';
+import { initSocket } from './socket.js';
 import { sequelize } from './db/database.js';
 import { csrfCheck } from './middleware/csrf.js';
 import rateLimit from './middleware/rate-limiter.js';
