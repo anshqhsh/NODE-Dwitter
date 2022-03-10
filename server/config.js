@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-//env파일에서 그때그때 받아오는 것보단 불러와서 재사용성을 높히기 위함
+//env파일에서 그때import { config } from '../config.js';그때 받아오는 것보단 불러와서 재사용성을 높히기 위함
 
 // 해당키가 잘 불러져 오는지 확인 하는 펑션
 function required(key, defaultValue = undefined) {
@@ -34,5 +34,9 @@ export const config = {
   },
   csrf: {
     plainToken: required('CSRF_SECRET_KEY'),
+  },
+  rateLimit: {
+    windowMs: 60000,
+    maxRequest: 100,
   },
 };
