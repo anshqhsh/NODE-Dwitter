@@ -12,12 +12,11 @@ export default class HttpClient {
         ...options.headers,
       },
     });
+    // body
     let data;
     try {
       data = await res.json();
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
 
     if (res.status > 299 || res.status < 200) {
       const message =

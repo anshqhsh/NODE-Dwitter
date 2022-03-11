@@ -5,7 +5,6 @@ import EditTweetForm from './EditTweetForm';
 
 const TweetCard = memo(
   ({ tweet, owner, onDelete, onUpdate, onUsernameClick }) => {
-    console.log('here');
     const { id, username, name, url, text, createdAt } = tweet;
     const [editing, setEditing] = useState(false);
     const onClose = () => setEditing(false);
