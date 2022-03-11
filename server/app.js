@@ -9,6 +9,7 @@ import { config } from './config.js';
 import { initSocket } from './connection/socket.js';
 import { sequelize } from './db/database.js';
 
+// express
 const app = express();
 
 // cors
